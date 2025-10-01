@@ -1,40 +1,17 @@
-﻿namespace WebAPI.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace WebAPI.Models
 {
+    [Table("Endereco")]
     public class Endereco
     {
-        /// <summary>
-        /// 
-        /// </summary>
+        public int Id { get; set; }
         public string CEP { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
         public string Logradouro { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
         public string Numero { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
         public string Complemento { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
         public string Bairro { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
         public string Cidade { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
         public string UF { get; set; }
     }
 }
