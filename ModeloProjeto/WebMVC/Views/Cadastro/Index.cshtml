@@ -1,0 +1,83 @@
+﻿@using PagedList;
+@using PagedList.Mvc;
+@model PagedList.IPagedList<WebMVC.Models.ClienteViewModel>
+
+@{
+    ViewBag.Title = "Clientes";
+}
+
+<div class="row mb-3">
+    <div class="col-md-6">
+        <h2>Lista de Clientes</h2>
+    </div>
+    <div class="col-md-6 text-right">
+        @Html.ActionLink("Novo Cliente", "NovoCliente", null, new { @class = "btn btn-sm btn-success" })
+    </div>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-hover table-striped table-bordered">
+        <thead class="bg-primary text-white">
+            <tr>
+                <th>@Html.DisplayNameFor(model => model[0].CPF)</th>
+                <th>@Html.DisplayNameFor(model => model[0].Nome)</th>
+                <th>@Html.DisplayNameFor(model => model[0].RG)</th>
+                <th class="text-center">Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => item.CPF)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Nome)</td>
+                    <td>@Html.DisplayFor(modelItem => item.RG)</td>
+                    <td class="text-center">
+                        <div class="btn-group btn-group-sm">
+                            @Html.ActionLink("Editar", "AlterarCliente", new { id = item.EnderecoId }, new { @class = "btn btn-sm btn-primary" })
+                            @Html.ActionLink("Detalhes", "DetahesCliente", new { id = item.Id }, new { @class = "btn btn-sm btn-info" })
+                            @Html.ActionLink("Deletar", "ExcluirCliente", new { id = item.Id }, new
+                            {
+                                @class = "btn btn-danger",
+                                onclick = "return confirm('Deseja realmente deletar este cliente?');"
+                            })
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<!-- Paginação -->
+<nav aria-label="Navegação de páginas">
+    <ul class="pagination">
+        @if (Model.HasPreviousPage)
+        {
+            <li>@Html.ActionLink("« Primeiro", "Index", new { pagina = 1 })</li>
+            <li>@Html.ActionLink("‹ Anterior", "Index", new { pagina = Model.PageNumber - 1 })</li>
+        }
+        else
+        {
+            <li class="disabled"><span>« Primeiro</span></li>
+            <li class="disabled"><span>‹ Anterior</span></li>
+        }
+
+        <li class="disabled">
+            <span>
+                Página @(Model.PageNumber) de @Model.PageCount
+            </span>
+        </li>
+
+        @if (Model.HasNextPage)
+        {
+            <li>@Html.ActionLink("Próxima ›", "Index", new { pagina = Model.PageNumber + 1 })</li>
+            <li>@Html.ActionLink("Última »", "Index", new { pagina = Model.PageCount })</li>
+        }
+        else
+        {
+            <li class="disabled"><span>Próxima ›</span></li>
+            <li class="disabled"><span>Última »</span></li>
+        }
+    </ul>
+</nav>

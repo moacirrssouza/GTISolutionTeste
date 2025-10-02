@@ -1,0 +1,45 @@
+﻿@model WebMVC.Models.ClienteViewModel
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Detalhes do Cliente</h2>
+
+<div>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>@Html.DisplayNameFor(model => model.CPF)</dt>
+        <dd>@Html.DisplayFor(model => model.CPF)</dd>
+        <dt>@Html.DisplayNameFor(model => model.Nome)</dt>
+        <dd>@Html.DisplayFor(model => model.Nome)</dd>
+        <dt>@Html.DisplayNameFor(model => model.RG)</dt>
+        <dd>@Html.DisplayFor(model => model.RG)</dd>
+        <dt>@Html.DisplayNameFor(model => model.DataExpedicao)</dt>
+        <dd>@Html.DisplayFor(model => model.DataExpedicao)</dd>
+        <dt>@Html.DisplayNameFor(model => model.OrgaoExpedicao)</dt>
+        <dd>@Html.DisplayFor(model => model.OrgaoExpedicao)</dd>
+        <dt>@Html.DisplayNameFor(model => model.UF)</dt>
+        <dd>@Html.DisplayFor(model => model.UF)</dd>
+
+        <dt>@Html.DisplayNameFor(model => model.Endereco.CEP)</dt>
+        <dd>@Html.DisplayFor(model => model.Endereco.CEP)</dd>
+        <dt>@Html.DisplayNameFor(model => model.Endereco.Logradouro)</dt>
+        <dd>@Html.DisplayFor(model => model.Endereco.Logradouro)</dd>
+        <dt>@Html.DisplayNameFor(model => model.Endereco.Numero)</dt>
+        <dd>@Html.DisplayFor(model => model.Endereco.Numero)</dd>
+        <dt>@Html.DisplayNameFor(model => model.Endereco.Complemento)</dt>
+        <dd>@Html.DisplayFor(model => model.Endereco.Complemento)</dd>
+        <dt>@Html.DisplayNameFor(model => model.Endereco.Bairro)</dt>
+        <dd>@Html.DisplayFor(model => model.Endereco.Bairro)</dd>
+        <dt>@Html.DisplayNameFor(model => model.Endereco.Cidade)</dt>
+        <dd>@Html.DisplayFor(model => model.Endereco.Cidade)</dd>
+        <dt>@Html.DisplayNameFor(model => model.Endereco.UF)</dt>
+        <dd>@Html.DisplayFor(model => model.Endereco.UF)</dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Editar", "Edit", new { id = Model.Id }) |
+    @Html.ActionLink("Retornar", "Index")
+</p>
