@@ -9,7 +9,7 @@ namespace WebAPI.Controllers
     public class CadastroController : ApiController
     {
         [HttpGet]
-        [Route("api/cadastro/clientes")]
+        [Route("api/cadastro/cliente")]
         public IHttpActionResult ListarClientes(bool incluirEndereco = false)
         {
             using (var ctx = new AppDbContext())
@@ -48,6 +48,50 @@ namespace WebAPI.Controllers
 
                 return Ok(clientes);
             }
+        }
+
+        [HttpGet]
+        [Route("api/cadastro/cliente/{id}")]
+        public IHttpActionResult BuscarClientePorId(int? id)
+        {
+            if (id == null)
+                return BadRequest("O Id do cliente é inválido");
+
+            ClienteEnderecoDTO cliente = null;
+            using (var ctx = new AppDbContext())
+            {
+                cliente = ctx.Cliente.Include("Endereco").ToList()
+                            .Where(c => c.Id == id)
+                            .Select(c => new ClienteEnderecoDTO()
+                            {
+                                Id = c.Id,
+                                CPF = c.CPF,
+                                Nome = c.Nome,
+                                RG = c.RG,
+                                DataExpedicao = c.DataExpedicao,
+                                OrgaoExpedicao = c.OrgaoExpedicao,
+                                UF = c.UF,
+                                DataNascimento = c.DataNascimento,
+                                Sexo = c.Sexo,
+                                EstadoCivil = c.EstadoCivil,
+                                Endereco = c.Endereco == null ? null : new EnderecoDTO()
+                                {
+                                    CEP = c.Endereco.CEP,
+                                    Logradouro = c.Endereco.Logradouro,
+                                    Numero = c.Endereco.Numero,
+                                    Complemento = c.Endereco.Complemento,
+                                    Bairro = c.Endereco.Bairro,
+                                    Cidade = c.Endereco.Cidade,
+                                    UF = c.Endereco.UF
+                                }
+                            }).FirstOrDefault();
+            }
+
+            if (cliente == null)
+            {
+                return NotFound();
+            }
+            return Ok(cliente);
         }
 
         [HttpPost]
@@ -91,8 +135,8 @@ namespace WebAPI.Controllers
         }
 
         [HttpPut]
-        [Route("api/cadastro/cliente")]
-        public IHttpActionResult AlterarCliente(Cliente cliente)
+        [Route("api/cadastro/cliente/{id}")]
+        public IHttpActionResult AtualizarCliente(Cliente cliente)
         {
             if (!ModelState.IsValid || cliente == null)
                 return BadRequest("Os dados do cliente são inválidos");

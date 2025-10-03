@@ -30,8 +30,5 @@ namespace WebAPI.Models
         [Required]
         [StringLength(2)]
         public string UF { get; set; }
-
-        // Máscara de CEP para exibição
-        public string CEPFormatado => string.IsNullOrWhiteSpace(CEP) ? "" : $"{CEP.Substring(0, 5)}-{CEP.Substring(5, 3)}";
     }
 }
