@@ -8,7 +8,6 @@ namespace WebAPI.Models
         public int Id { get; set; }
 
         [Required(ErrorMessage = "CPF é obrigatório.")]
-        [RegularExpression(@"^\d{11}$", ErrorMessage = "CPF deve conter 11 números.")]
         public string CPF { get; set; }
 
         [Required(ErrorMessage = "Nome é obrigatório.")]

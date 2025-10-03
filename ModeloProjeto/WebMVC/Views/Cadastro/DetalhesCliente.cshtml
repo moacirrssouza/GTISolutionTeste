@@ -1,0 +1,59 @@
+﻿@model WebMVC.Models.ClienteViewModel
+
+@{
+    ViewBag.Title = "Detalhes do Cliente";
+}
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+<div class="container">
+    <h2 class="text-primary">Detalhes do Cliente</h2>
+    <hr />
+
+    <div class="panel panel-default">
+        <div class="panel-heading"><strong>Informações Pessoais</strong></div>
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-4"><strong>CPF:</strong> @Html.DisplayFor(m => m.CPF)</div>
+                <div class="col-md-4"><strong>Nome:</strong> @Html.DisplayFor(m => m.Nome)</div>
+                <div class="col-md-4"><strong>RG:</strong> @Html.DisplayFor(m => m.RG)</div>
+            </div>
+            <div class="row">
+                <div class="col-md-4"><strong>Data de Expedição:</strong> @Html.DisplayFor(m => m.DataExpedicao)</div>
+                <div class="col-md-4"><strong>Órgão Expedidor:</strong> @Html.DisplayFor(m => m.OrgaoExpedicao)</div>
+                <div class="col-md-4"><strong>UF:</strong> @Html.DisplayFor(m => m.UF)</div>
+            </div>
+            <div class="row">
+                <div class="col-md-4"><strong>Sexo:</strong> @Html.DisplayFor(m => m.Sexo)</div>
+                <div class="col-md-4"><strong>Estado Civil:</strong> @Html.DisplayFor(m => m.EstadoCivil)</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading"><strong>Endereço</strong></div>
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-3"><strong>CEP:</strong> @Html.DisplayFor(m => m.Endereco.CEP)</div>
+                <div class="col-md-3"><strong>Logradouro:</strong> @Html.DisplayFor(m => m.Endereco.Logradouro)</div>
+                <div class="col-md-2"><strong>Número:</strong> @Html.DisplayFor(m => m.Endereco.Numero)</div>
+                <div class="col-md-4"><strong>Complemento:</strong> @Html.DisplayFor(m => m.Endereco.Complemento)</div>
+            </div>
+            <div class="row">
+                <div class="col-md-3"><strong>Bairro:</strong> @Html.DisplayFor(m => m.Endereco.Bairro)</div>
+                <div class="col-md-3"><strong>Cidade:</strong> @Html.DisplayFor(m => m.Endereco.Cidade)</div>
+                <div class="col-md-2"><strong>UF:</strong> @Html.DisplayFor(m => m.Endereco.UF)</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="btn-group">
+        <a href="@Url.Action("AlterarCliente", new { id = Model.ClienteId })"
+           class="btn btn-success">
+            <i class="fa fa-check"></i> Editar
+        </a>
+        <a href="@Url.Action("Index", "Cadastro")" class="btn btn-default">
+            <span class="fa fa-arrow-left"></span> Voltar
+        </a>
+    </div>
+</div>

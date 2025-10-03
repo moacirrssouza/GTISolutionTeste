@@ -12,6 +12,7 @@ namespace WebMVC.Controllers
 {
     public class CadastroController : Controller
     {
+        [HttpGet]
         public ActionResult Index(int? pagina)
         {
             int paginaTamanho = 10;
@@ -20,7 +21,7 @@ namespace WebMVC.Controllers
             using (var client = new HttpClient())
             {
                 client.BaseAddress = new Uri("http://localhost:51456/api/");
-                var responseTask = client.GetAsync("cadastro");
+                var responseTask = client.GetAsync("cadastro/cliente");
                 responseTask.Wait();
 
                 var result = responseTask.Result;
@@ -39,81 +40,88 @@ namespace WebMVC.Controllers
             }
         }
 
+        [HttpGet]
         public ActionResult NovoCliente()
         {
             return View();
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<ActionResult> NovoCliente(ClienteEnderecoViewModel cliente)
         {
             if (cliente == null)
-            {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
+
+            if (!ModelState.IsValid)
+                return View(cliente);
 
             using (var client = new HttpClient { BaseAddress = new Uri("http://localhost:51456/api/") })
             {
-                var response = await client.PostAsJsonAsync("cadastro/cliente", cliente);
+                client.Timeout = TimeSpan.FromSeconds(10); 
 
+                try
+                {
+                    var response = await client.PostAsJsonAsync("cadastro/cliente", cliente);
+                    if (response.IsSuccessStatusCode)
+                        return RedirectToAction("Index");
+
+                    var errorMessage = await response.Content.ReadAsStringAsync();
+                    ModelState.AddModelError(string.Empty, "Erro no servidor: " + errorMessage);
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError(string.Empty, "Erro ao acessar a API: " + ex.Message);
+                }
+            }
+
+            return View(cliente);
+        }
+
+        [HttpGet]
+        public async Task<ActionResult> AlterarCliente(int id)
+        {
+            ClienteViewModel cliente = null;
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri("http://localhost:51456/api/");
+                var response = await client.GetAsync("cadastro/cliente/?id=" + id);
                 if (response.IsSuccessStatusCode)
                 {
-                    return RedirectToAction("Index");
+                    var clientes = await response.Content.ReadAsAsync<List<ClienteViewModel>>();
+                    cliente = clientes.FirstOrDefault();
                 }
             }
 
-            ModelState.AddModelError(string.Empty, "Erro no Servidor. Contacte o Administrador.");
-            return View(cliente);
-        }
-
-        public ActionResult AlterarCliente(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-
-            ClienteViewModel cliente = null;
-
-            using (var client = new HttpClient())
-            {
-                client.BaseAddress = new Uri("http://localhost:51456/api/cadastro/");
-                var responseTask = client.GetAsync("?id=" + id.ToString());
-                responseTask.Wait();
-                var result = responseTask.Result;
-                if (result.IsSuccessStatusCode)
-                {
-                    var readTask = result.Content.ReadAsAsync<ClienteViewModel>();
-                    readTask.Wait();
-                    cliente= readTask.Result;
-                }
-            }
+            if (cliente == null)
+                return HttpNotFound();
 
             return View(cliente);
         }
 
-        public ActionResult AlterarCliente(ClienteViewModel cliente)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> AlterarCliente(ClienteViewModel cliente)
         {
             if (cliente == null)
-            {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
 
             using (var client = new HttpClient())
             {
-                client.BaseAddress = new Uri("http://localhost:51456/api/Cadastro");
-                var putTask = client.PutAsJsonAsync<ClienteViewModel>("Cadastro", cliente);
-                putTask.Wait();
-
-                var result = putTask.Result;
-                if (result.IsSuccessStatusCode)
-                {
+                client.BaseAddress = new Uri("http://localhost:51456/api/");
+                var response = await client.PostAsJsonAsync("cadastro/cliente", cliente);
+                if (response.IsSuccessStatusCode)
                     return RedirectToAction("Index");
-                }
+
+                var errorMessage = await response.Content.ReadAsStringAsync();
+                ModelState.AddModelError(string.Empty, "Erro na API: " + errorMessage);
             }
+
             return View(cliente);
         }
 
-        public ActionResult DetahesCliente(int? id)
+        [HttpGet]
+        public async Task<ActionResult> DetaheCliente(int? id)
         {
             if (id == null)
             {
@@ -121,47 +129,42 @@ namespace WebMVC.Controllers
             }
 
             ClienteViewModel cliente = null;
-
             using (var client = new HttpClient())
             {
                 client.BaseAddress = new Uri("http://localhost:51456/api/cadastro/cliente/");
                 var responseTask = client.GetAsync("?id=" + id.ToString());
                 responseTask.Wait();
-
                 var result = responseTask.Result;
                 if (result.IsSuccessStatusCode)
                 {
-                    var readTask = result.Content.ReadAsAsync<ClienteViewModel>();
+                    var readTask = result.Content.ReadAsAsync<List<ClienteViewModel>>();
                     readTask.Wait();
 
-                    cliente = readTask.Result;
+                    var clientes = readTask.Result;
+                    cliente = clientes.FirstOrDefault(); 
                 }
             }
-            return View("DetalheCliente", cliente);
+
+            if (cliente == null)
+                return HttpNotFound();
+
+            return View("DetalhesCliente", cliente);
         }
 
-        public ActionResult ExcluirCliente(int? id)
+        [HttpPost]
+        public async Task<ActionResult> ExcluirCliente(int id)
         {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-
-            ClienteViewModel cliente = null;
 
             using (var client = new HttpClient())
             {
-                client.BaseAddress = new Uri("http://localhost:51456/api/");
-                var deleteTask = client.DeleteAsync("cadastro/cliente/" + id.ToString());
-                deleteTask.Wait();
+                client.BaseAddress = new Uri("https://localhost:51456/api/");
+                var response = await client.DeleteAsync($"cadastro/cliente/{id}");
 
-                var result = deleteTask.Result;
-                if (result.IsSuccessStatusCode)
-                {
+                if (response.IsSuccessStatusCode)
                     return RedirectToAction("Index");
-                }
             }
-            return View(cliente);
+
+            return HttpNotFound();
         }
     }
 }
