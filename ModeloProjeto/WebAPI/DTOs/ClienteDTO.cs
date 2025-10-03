@@ -10,8 +10,6 @@
             public int Id { get; set; }
 
             [Required(ErrorMessage = "CPF é obrigatório.")]
-            [RegularExpression(@"^(\d{11}|\d{3}\.\d{3}\.\d{3}-\d{2})$",
-             ErrorMessage = "CPF deve conter 11 números ou estar no formato 000.000.000-00.")]
             public string CPF { get; set; }
 
             [Required(ErrorMessage = "Nome é obrigatório.")]
