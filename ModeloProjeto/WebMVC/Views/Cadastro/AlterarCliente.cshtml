@@ -1,4 +1,4 @@
-﻿@model WebMVC.Models.ClienteEnderecoViewModel
+﻿@model WebMVC.Models.ClienteViewModel
 @{
     ViewBag.Title = "Atualizar cadastro de cliente";
 }
@@ -6,7 +6,7 @@
 <div class="container">
     <div class="row">
         <div class="col-md-12">
-            <h3 class="text-center mb-4">Atualizar cCadastro de cliente</h3>
+            <h3 class="text-center mb-4 text-primary">Atualizar Cadastro de cliente</h3>
 
             @using (Html.BeginForm())
             {
@@ -17,17 +17,15 @@
                         <h5 class="panel-title">Cliente</h5>
                     </div>
                     <div class="panel-body">
-                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-
                         <div class="row">
                             <div class="form-group col-md-2">
                                 @Html.LabelFor(m => m.CPF)
-                                @Html.EditorFor(m => m.CPF, new { @class = "form-control input-sm", @id = "cpf" })
-                                @Html.ValidationMessageFor(m => m.CPF, "", new { htmlAttributes = new { @class = "text-danger" } })
+                                @Html.TextBoxFor(m => m.CPF, new { @class = "form-control input-sm", @id = "cpf" })
+                                @Html.ValidationMessageFor(m => m.CPF, "", new { @class = "text-danger" })
                             </div>
                             <div class="form-group col-md-10">
                                 @Html.LabelFor(m => m.Nome)
-                                @Html.EditorFor(m => m.Nome, new { htmlAttributes = new { @class = "form-control input-sm" } })
+                                @Html.TextBoxFor(m => m.Nome, new { @class = "form-control input-sm" })
                                 @Html.ValidationMessageFor(m => m.Nome, "", new { @class = "text-danger" })
                             </div>
                         </div>
@@ -35,11 +33,13 @@
                         <div class="row">
                             <div class="form-group col-md-3">
                                 @Html.LabelFor(m => m.RG)
-                                @Html.EditorFor(m => m.RG, new { htmlAttributes = new { @class = "form-control input-sm", @id = "rg" } })
+                                @Html.TextBoxFor(m => m.RG, new { @class = "form-control input-sm", @id = "rg" })
+                                @Html.ValidationMessageFor(m => m.RG, "", new { @class = "text-danger" })
                             </div>
                             <div class="form-group col-sm-3">
                                 @Html.LabelFor(m => m.DataExpedicao)
                                 @Html.EditorFor(m => m.DataExpedicao, new { htmlAttributes = new { @class = "form-control input-sm", type = "date" } })
+                                @Html.ValidationMessageFor(m => m.DataExpedicao, "", new { @class = "text-danger" })
                             </div>
                             <div class="form-group col-md-2">
                                 @Html.LabelFor(m => m.OrgaoExpedicao)
@@ -51,8 +51,9 @@
                                                                 Value = s.ToString(),
                                                                 Text = s.ToString()
                                                             }),
-                                                        "Selecione", 
+                                                        "Selecione",
                                                         new { @class = "form-control input-sm" })
+                                @Html.ValidationMessageFor(m => m.OrgaoExpedicao, "", new { @class = "text-danger" })
                             </div>
                             <div class="form-group col-md-2">
                                 @Html.LabelFor(m => m.UF)
@@ -66,12 +67,14 @@
                                                             }),
                                                         "Selecione",
                                                         new { @class = "form-control input-sm" })
+                                @Html.ValidationMessageFor(m => m.UF, "", new { @class = "text-danger" })
                             </div>
                         </div>
                         <div class="row">
                             <div class="form-group col-md-3">
                                 @Html.LabelFor(m => m.DataNascimento)
                                 @Html.EditorFor(m => m.DataNascimento, new { htmlAttributes = new { @class = "form-control input-sm", type = "date" } })
+                                @Html.ValidationMessageFor(m => m.DataNascimento, "", new { @class = "text-danger" })
                             </div>
                             <div class="form-group col-md-3">
                                 @Html.LabelFor(m => m.Sexo)
@@ -83,8 +86,9 @@
                                                                 Value = s.ToString(),
                                                                 Text = s.ToString()
                                                             }),
-                                                        "Selecione", 
+                                                        "Selecione",
                                                         new { @class = "form-control input-sm" })
+                                @Html.ValidationMessageFor(m => m.Sexo, "", new { @class = "text-danger" })
                             </div>
                             <div class="form-group col-md-3">
                                 @Html.LabelFor(m => m.EstadoCivil)
@@ -93,11 +97,12 @@
                                                             .Cast<WebMVC.Enums.EstadoCivil>()
                                                                     .Select(s => new SelectListItem
                                                                     {
-                                                                        Value = s.ToString(),
-                                                                        Text = s.ToString()
+                                                                    Value = s.ToString(),
+                                                                    Text = s.ToString()
                                                                     }),
                                                                     "Selecione",
                                                                     new { @class = "form-control input-sm" })
+                                @Html.ValidationMessageFor(m => m.EstadoCivil, "", new { @class = "text-danger" })
                             </div>
                         </div>
                     </div>
@@ -112,37 +117,44 @@
                             <div class="form-group col-md-2">
                                 @Html.LabelFor(m => m.Endereco.CEP)
                                 <div class="input-group">
-                                    @Html.EditorFor(m => m.Endereco.CEP, new { htmlAttributes = new { @class = "form-control imput-sm", @id = "cep" } })
+                                    @Html.TextBoxFor(m => m.Endereco.CEP, new { @class = "form-control input-sm", @id = "cep" })
                                     <span class="input-group-btn">
-                                        <button class="btn btn-default" type="button">
-                                            <span class="fa fa-search"></span>
+                                        <button class="btn btn-default input-sm" type="button">
+                                            <i class="fa fa-search"></i>
                                         </button>
                                     </span>
                                 </div>
+                                @Html.ValidationMessageFor(m => m.Endereco.CEP, "", new { @class = "text-danger" })
                             </div>
                             <div class="form-group col-md-2">
                                 @Html.LabelFor(m => m.Endereco.Logradouro)
                                 @Html.EditorFor(m => m.Endereco.Logradouro, new { htmlAttributes = new { @class = "form-control input-sm", @id = "rua" } })
+                                @Html.ValidationMessageFor(m => m.Endereco.Logradouro, "", new { @class = "text-danger" })
                             </div>
                             <div class="form-group col-md-1">
                                 @Html.LabelFor(m => m.Endereco.Numero)
                                 @Html.EditorFor(m => m.Endereco.Numero, new { htmlAttributes = new { @class = "form-control input-sm", @id = "cep" } })
+                                @Html.ValidationMessageFor(m => m.Endereco.Numero, "", new { @class = "text-danger" })
                             </div>
                             <div class="form-group col-md-2">
                                 @Html.LabelFor(m => m.Endereco.Complemento)
                                 @Html.EditorFor(m => m.Endereco.Complemento, new { htmlAttributes = new { @class = "form-control input-sm", @id = "cep" } })
+                                @Html.ValidationMessageFor(m => m.Endereco.Complemento, "", new { @class = "text-danger" })
                             </div>
                             <div class="form-group col-md-2">
                                 @Html.LabelFor(m => m.Endereco.Bairro)
                                 @Html.EditorFor(m => m.Endereco.Bairro, new { htmlAttributes = new { @class = "form-control input-sm", @id = "bairro" } })
+                                @Html.ValidationMessageFor(m => m.Endereco.Bairro, "", new { @class = "text-danger" })
                             </div>
                             <div class="form-group col-md-2">
                                 @Html.LabelFor(m => m.Endereco.Cidade)
                                 @Html.EditorFor(m => m.Endereco.Cidade, new { htmlAttributes = new { @class = "form-control input-sm", @id = "cidade" } })
+                                @Html.ValidationMessageFor(m => m.Endereco.Cidade, "", new { @class = "text-danger" })
                             </div>
                             <div class="form-group col-md-1">
                                 @Html.LabelFor(m => m.Endereco.UF)
                                 @Html.EditorFor(m => m.Endereco.UF, new { htmlAttributes = new { @class = "form-control input-sm", @id = "uf" } })
+                                @Html.ValidationMessageFor(m => m.Endereco.UF, "", new { @class = "text-danger" })
                             </div>
                         </div>
 
@@ -165,10 +177,20 @@
 </div>
 
 <script>
-    $(document).ready(function () {
+    $(function () {
+        // máscaras
         $('#cpf').mask('000.000.000-00');
-        $('#cep').mask('00000-000');
         $('#rg').mask('00.000.000-0');
+        $('#cep').mask('00000-000');
+
+        // validação no submit
+        $("form").submit(function (e) {
+            if (!$(this).valid()) {
+                e.preventDefault();
+                $(this).find(":input.error:first").focus();
+                alert("Por favor, preencha os campos corretamente.");
+            }
+        });
     });
 </script>
 

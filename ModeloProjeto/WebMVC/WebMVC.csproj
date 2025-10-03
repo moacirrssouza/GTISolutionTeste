@@ -274,7 +274,7 @@
     <Content Include="Views\Cadastro\NovoCliente.cshtml" />
     <Content Include="Scripts\jquery-3.3.1.slim.min.map" />
     <Content Include="Scripts\jquery-3.3.1.min.map" />
-    <Content Include="Views\Cadastro\DetahesCliente.cshtml" />
+    <Content Include="Views\Cadastro\DetalhesCliente.cshtml" />
     <Content Include="Views\Cadastro\AlterarCliente.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>

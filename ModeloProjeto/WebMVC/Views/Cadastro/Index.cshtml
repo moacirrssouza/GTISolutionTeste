@@ -8,7 +8,7 @@
 
 <div class="row mb-3">
     <div class="col-md-6">
-        <h2>Lista de Clientes</h2>
+        <h2 class="text-primary">Lista de Clientes</h2>
     </div>
     <div class="col-md-6 text-right">
         @Html.ActionLink("Novo Cliente", "NovoCliente", null, new { @class = "btn btn-sm btn-success" })
@@ -22,6 +22,11 @@
                 <th>@Html.DisplayNameFor(model => model[0].CPF)</th>
                 <th>@Html.DisplayNameFor(model => model[0].Nome)</th>
                 <th>@Html.DisplayNameFor(model => model[0].RG)</th>
+                <th>@Html.DisplayNameFor(model => model[0].DataExpedicao)</th>
+                <th>@Html.DisplayNameFor(model => model[0].OrgaoExpedicao)</th>
+                <th>@Html.DisplayNameFor(model => model[0].UF)</th>
+                <th>@Html.DisplayNameFor(model => model[0].Sexo)</th>
+                <th>@Html.DisplayNameFor(model => model[0].EstadoCivil)</th>
                 <th class="text-center">Ações</th>
             </tr>
         </thead>
@@ -32,24 +37,29 @@
                     <td>@Html.DisplayFor(modelItem => item.CPF)</td>
                     <td>@Html.DisplayFor(modelItem => item.Nome)</td>
                     <td>@Html.DisplayFor(modelItem => item.RG)</td>
+                    <td>@Html.DisplayFor(modelItem => item.DataExpedicao)</td>
+                    <td>@Html.DisplayFor(modelItem => item.OrgaoExpedicao)</td>
+                    <td>@Html.DisplayFor(modelItem => item.UF)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Sexo)</td>
+                    <td>@Html.DisplayFor(modelItem => item.EstadoCivil)</td>
                     <td class="text-center">
                         <div class="btn-group btn-group-sm">
-                            @Html.ActionLink("Editar", "AlterarCliente", new { id = item.EnderecoId }, new { @class = "btn btn-sm btn-primary" })
-                            @Html.ActionLink("Detalhes", "DetahesCliente", new { id = item.Id }, new { @class = "btn btn-sm btn-info" })
-                            @Html.ActionLink("Deletar", "ExcluirCliente", new { id = item.Id }, new
+                            @Html.ActionLink("Editar", "AlterarCliente", new { id = item.ClienteId }, new { @class = "btn btn-sm btn-primary" })
+                            @Html.ActionLink("Detalhes", "DetaheCliente", new { id = item.ClienteId }, new { @class = "btn btn-sm btn-info" })
+
+                            @using (Html.BeginForm("ExcluirCliente", "Cadastro", new { id = item.ClienteId }, FormMethod.Post, new { style = "display:inline;", onsubmit = "return confirm('Deseja realmente deletar este contato ?');" }))
                             {
-                                @class = "btn btn-danger",
-                                onclick = "return confirm('Deseja realmente deletar este cliente?');"
-                            })
+                                <button type="submit" class="btn btn-sm btn-danger">Deletar</button>
+                            }
                         </div>
                     </td>
+
                 </tr>
             }
         </tbody>
     </table>
 </div>
 
-<!-- Paginação -->
 <nav aria-label="Navegação de páginas">
     <ul class="pagination">
         @if (Model.HasPreviousPage)
