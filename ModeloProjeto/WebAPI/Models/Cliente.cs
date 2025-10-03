@@ -1,57 +1,22 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WebAPI.Models
 {
+    [Table("Cliente")]
     public class Cliente
     {
-        /// <summary>
-        ///
-        /// </summary>
         public int Id { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
         public string CPF { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
         public string Nome { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
         public string RG { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
         public DateTime DataExpedicao { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public string ÓrgaoExpedicao { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public string UF { get; set; } 
-
-        /// <summary>
-        /// 
-        /// </summary>
+        public string OrgaoExpedicao { get; set; }
+        public string UF { get; set; }
         public DateTime DataNascimento { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
         public string Sexo { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
         public string EstadoCivil { get; set; }
+        public virtual Endereco Endereco { get; set; }
+        public int EnderecoId { get; set; }
     }
 }

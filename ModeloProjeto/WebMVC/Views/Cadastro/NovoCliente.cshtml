@@ -1,0 +1,221 @@
+﻿@model WebMVC.Models.ClienteEnderecoViewModel
+@{
+    ViewBag.Title = "Cadastro de cliente";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h3 class="text-center mb-4">Cadastro de cliente</h3>
+
+            @using (Html.BeginForm())
+            {
+                @Html.AntiForgeryToken()
+
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h5 class="panel-title">Cliente</h5>
+                    </div>
+                    <div class="panel-body">
+                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                        <div class="row">
+                            <div class="form-group col-md-2">
+                                @Html.LabelFor(m => m.CPF)
+                                @Html.TextBoxFor(m => m.CPF, new { @class = "form-control input-sm", @id = "cpf" })
+                                @Html.ValidationMessageFor(m => m.CPF, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="form-group col-md-10">
+                                @Html.LabelFor(m => m.Nome)
+                                @Html.TextBoxFor(m => m.Nome, new { @class = "form-control input-sm" })
+                                @Html.ValidationMessageFor(m => m.Nome, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="form-group col-md-3">
+                                @Html.LabelFor(m => m.RG)
+                                @Html.TextBoxFor(m => m.RG, new { @class = "form-control input-sm", @id = "rg" })
+                            </div>
+                            <div class="form-group col-sm-3">
+                                @Html.LabelFor(m => m.DataExpedicao)
+                                @Html.EditorFor(m => m.DataExpedicao, new { htmlAttributes = new { @class = "form-control input-sm", type = "date" } })
+                            </div>
+                            <div class="form-group col-md-2">
+                                @Html.LabelFor(m => m.OrgaoExpedicao)
+                                @Html.DropDownListFor(m => m.OrgaoExpedicao,
+                                                        Enum.GetValues(typeof(WebMVC.Enums.OrgaoExpedicao))
+                                                            .Cast<WebMVC.Enums.OrgaoExpedicao>()
+                                                            .Select(s => new SelectListItem
+                                                            {
+                                                                Value = s.ToString(),
+                                                                Text = s.ToString()
+                                                            }),
+                                                        "Selecione",
+                                                        new { @class = "form-control input-sm" })
+                            </div>
+                            <div class="form-group col-md-2">
+                                @Html.LabelFor(m => m.UF)
+                                @Html.DropDownListFor(m => m.UF,
+                                                        Enum.GetValues(typeof(WebMVC.Enums.UF))
+                                                            .Cast<WebMVC.Enums.UF>()
+                                                            .Select(s => new SelectListItem
+                                                            {
+                                                                Value = s.ToString(),
+                                                                Text = s.ToString()
+                                                            }),
+                                                        "Selecione",
+                                                        new { @class = "form-control input-sm" })
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-3">
+                                @Html.LabelFor(m => m.DataNascimento)
+                                @Html.EditorFor(m => m.DataNascimento, new { htmlAttributes = new { @class = "form-control input-sm", type = "date" } })
+                            </div>
+                            <div class="form-group col-md-3">
+                                @Html.LabelFor(m => m.Sexo)
+                                @Html.DropDownListFor(m => m.Sexo,
+                                                        Enum.GetValues(typeof(WebMVC.Enums.Genero))
+                                                            .Cast<WebMVC.Enums.Genero>()
+                                                            .Select(s => new SelectListItem
+                                                            {
+                                                                Value = s.ToString(),
+                                                                Text = s.ToString()
+                                                            }),
+                                                        "Selecione",
+                                                        new { @class = "form-control input-sm" })
+                            </div>
+                            <div class="form-group col-md-3">
+                                @Html.LabelFor(m => m.EstadoCivil)
+                                @Html.DropDownListFor(m => m.EstadoCivil,
+                                                        Enum.GetValues(typeof(WebMVC.Enums.EstadoCivil))
+                                                            .Cast<WebMVC.Enums.EstadoCivil>()
+                                                                    .Select(s => new SelectListItem
+                                                                    {
+                                                                    Value = s.ToString(),
+                                                                    Text = s.ToString()
+                                                                    }),
+                                                                    "Selecione",
+                                                                    new { @class = "form-control input-sm" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h5 class="panel-title">Endereço</h5>
+                    </div>
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="form-group col-md-2">
+                                @Html.LabelFor(m => m.Endereco.CEP)
+                                <div class="input-group">
+                                    @Html.TextBoxFor(m => m.Endereco.CEP, new { @class = "form-control imput-sm", @id = "cep" })
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-default" type="button">
+                                            <span class="fa fa-search"></span>
+                                        </button>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="form-group col-md-2">
+                                @Html.LabelFor(m => m.Endereco.Logradouro)
+                                @Html.EditorFor(m => m.Endereco.Logradouro, new { htmlAttributes = new { @class = "form-control input-sm", @id = "rua" } })
+                            </div>
+                            <div class="form-group col-md-1">
+                                @Html.LabelFor(m => m.Endereco.Numero)
+                                @Html.EditorFor(m => m.Endereco.Numero, new { htmlAttributes = new { @class = "form-control input-sm", @id = "cep" } })
+                            </div>
+                            <div class="form-group col-md-2">
+                                @Html.LabelFor(m => m.Endereco.Complemento)
+                                @Html.EditorFor(m => m.Endereco.Complemento, new { htmlAttributes = new { @class = "form-control input-sm", @id = "cep" } })
+                            </div>
+                            <div class="form-group col-md-2">
+                                @Html.LabelFor(m => m.Endereco.Bairro)
+                                @Html.EditorFor(m => m.Endereco.Bairro, new { htmlAttributes = new { @class = "form-control input-sm", @id = "bairro" } })
+                            </div>
+                            <div class="form-group col-md-2">
+                                @Html.LabelFor(m => m.Endereco.Cidade)
+                                @Html.EditorFor(m => m.Endereco.Cidade, new { htmlAttributes = new { @class = "form-control input-sm", @id = "cidade" } })
+                            </div>
+                            <div class="form-group col-md-1">
+                                @Html.LabelFor(m => m.Endereco.UF)
+                                @Html.EditorFor(m => m.Endereco.UF, new { htmlAttributes = new { @class = "form-control input-sm", @id = "uf" } })
+                            </div>
+                        </div>
+
+                        <div class="row">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group text-right">
+                    <button type="submit" class="btn btn-success">
+                        <span class="fa fa-check"></span> Salvar
+                    </button>
+                    <a href="@Url.Action("Index", "Cadastro")" class="btn btn-default">
+                        <span class="fa fa-arrow-left"></span> Voltar
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('#cpf').mask('000.000.000-00');
+        $('#cep').mask('00000-000');
+        $('#rg').mask('00.000.000-0');
+    });
+</script>
+
+<script>
+    $(document).ready(function () {
+        function limpa_formulário_cep() {
+            $("#rua").val("");
+            $("#bairro").val("");
+            $("#cidade").val("");
+            $("#uf").val("");
+            $("#ibge").val("");
+        }
+
+        $("#cep").blur(function () {
+            var cep = $(this).val().replace(/\D/g, '');
+            if (cep != "") {
+
+                var validacep = /^[0-9]{8}$/;
+                if (validacep.test(cep)) {
+                    $("#rua").val("...");
+                    $("#bairro").val("...");
+                    $("#cidade").val("...");
+                    $("#uf").val("...");
+                    $("#ibge").val("...");
+
+                    $.getJSON("https://viacep.com.br/ws/" + cep + "/json/?callback=?", function (dados) {
+                        if (!("erro" in dados)) {
+                            $("#rua").val(dados.logradouro);
+                            $("#bairro").val(dados.bairro);
+                            $("#cidade").val(dados.localidade);
+                            $("#uf").val(dados.uf);
+                            $("#ibge").val(dados.ibge);
+                        } 
+                        else {
+                            limpa_formulário_cep();
+                            alert("CEP não encontrado.");
+                        }
+                    });
+                } 
+                else {
+                    limpa_formulário_cep();
+                    alert("Formato de CEP inválido.");
+                }
+            } 
+            else {
+                limpa_formulário_cep();
+            }
+        });
+    });
+</script>
