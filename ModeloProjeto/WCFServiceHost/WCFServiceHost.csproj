@@ -69,9 +69,6 @@
     <Compile Include="CadastroService.svc.cs">
       <DependentUpon>CadastroService.svc</DependentUpon>
     </Compile>
-    <Compile Include="Enums\EstadoCivil.cs" />
-    <Compile Include="Enums\UF.cs" />
-    <Compile Include="Validation\ValidacaoCadastro.cs" />
     <Compile Include="ICadastroService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

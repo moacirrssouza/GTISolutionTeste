@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.ServiceModel;
-using WCFServiceHost.Enums;
 
 namespace WCFServiceHost
 {
@@ -28,6 +27,8 @@ namespace WCFServiceHost
     [DataContract]
     public class Endereco
     {
+        [DataMember]
+        public int Id { get; set; }
 
         [DataMember]
         public string CEP { get; set; }
@@ -48,12 +49,14 @@ namespace WCFServiceHost
         public string Cidade { get; set; }
 
         [DataMember]
-        public UF UF { get; set; }
+        public string UF { get; set; }
     }
 
     [DataContract]
     public class Cliente
     {
+        [DataMember]
+        public int Id { get; set; }
 
         [DataMember]
         public string CPF { get; set; }
@@ -80,7 +83,7 @@ namespace WCFServiceHost
         public string Sexo { get; set; }
 
         [DataMember]
-        public EstadoCivil EstadoCivil { get; set; }
+        public string EstadoCivil { get; set; }
 
         [DataMember]
         public Endereco Endereco { get; set; }

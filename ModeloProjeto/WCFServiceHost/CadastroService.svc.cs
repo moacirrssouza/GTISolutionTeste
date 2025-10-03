@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data.SqlClient;
-using WCFServiceHost.Enums;
 
 namespace WCFServiceHost
 {
@@ -20,11 +19,26 @@ namespace WCFServiceHost
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
                 conn.Open();
-                int clienteId;
-                using (SqlCommand cmd = new SqlCommand(@"
-                    INSERT INTO Cliente (CPF, Nome, RG, DataExpedicao, OrgaoExpedicao, UF, DataNascimento, Sexo, EstadoCivil)
-                    VALUES (@CPF, @Nome, @RG, @DataExpedicao, @OrgaoExpedicao, @UF, @DataNascimento, @Sexo, @EstadoCivil);
-                    SELECT CAST(SCOPE_IDENTITY() AS INT);", conn))
+                int enderecoId;
+                using (SqlCommand cmdEndereco = new SqlCommand(@" INSERT INTO Endereco (CEP, Logradouro, Numero, Complemento, Bairro, Cidade, UF)
+                                                                  VALUES (@CEP, @Logradouro, @Numero, @Complemento, @Bairro, @Cidade, @UF);
+                                                                  SELECT CAST(SCOPE_IDENTITY() AS INT);", conn))
+                {
+                    cmdEndereco.Parameters.AddWithValue("@CEP", cliente.Endereco.CEP);
+                    cmdEndereco.Parameters.AddWithValue("@Logradouro", cliente.Endereco.Logradouro);
+                    cmdEndereco.Parameters.AddWithValue("@Numero", cliente.Endereco.Numero);
+                    cmdEndereco.Parameters.AddWithValue("@Complemento", (object)cliente.Endereco.Complemento ?? DBNull.Value);
+                    cmdEndereco.Parameters.AddWithValue("@Bairro", cliente.Endereco.Bairro);
+                    cmdEndereco.Parameters.AddWithValue("@Cidade", cliente.Endereco.Cidade);
+                    cmdEndereco.Parameters.AddWithValue("@UF", cliente.Endereco.UF);
+                    enderecoId = (int)cmdEndereco.ExecuteScalar();
+                }
+
+                using (SqlCommand cmd = new SqlCommand(@" INSERT INTO Cliente 
+                                                        (CPF, Nome, RG, DataExpedicao, OrgaoExpedicao, UF, DataNascimento, Sexo, EstadoCivil, EnderecoId)
+                                                        VALUES 
+                                                        (@CPF, @Nome, @RG, @DataExpedicao, @OrgaoExpedicao, @UF, @DataNascimento, @Sexo, @EstadoCivil, @EnderecoId);",
+                                                        conn))
                 {
                     cmd.Parameters.AddWithValue("@CPF", cliente.CPF);
                     cmd.Parameters.AddWithValue("@Nome", cliente.Nome);
@@ -35,24 +49,8 @@ namespace WCFServiceHost
                     cmd.Parameters.AddWithValue("@DataNascimento", cliente.DataNascimento);
                     cmd.Parameters.AddWithValue("@Sexo", cliente.Sexo);
                     cmd.Parameters.AddWithValue("@EstadoCivil", cliente.EstadoCivil);
-
-                    clienteId = (int)cmd.ExecuteScalar();
-                }
-
-                using (SqlCommand cmdEndereco = new SqlCommand(@"
-                    INSERT INTO Endereco (ClienteId, CEP, Logradouro, Numero, Complemento, Bairro, Cidade, UF)
-                    VALUES (@ClienteId, @CEP, @Logradouro, @Numero, @Complemento, @Bairro, @Cidade, @EnderecoUF)", conn))
-                {
-                    cmdEndereco.Parameters.AddWithValue("@ClienteId", clienteId);
-                    cmdEndereco.Parameters.AddWithValue("@CEP", cliente.Endereco.CEP);
-                    cmdEndereco.Parameters.AddWithValue("@Logradouro", cliente.Endereco.Logradouro);
-                    cmdEndereco.Parameters.AddWithValue("@Numero", cliente.Endereco.Numero);
-                    cmdEndereco.Parameters.AddWithValue("@Complemento", (object)cliente.Endereco.Complemento ?? DBNull.Value);
-                    cmdEndereco.Parameters.AddWithValue("@Bairro", cliente.Endereco.Bairro);
-                    cmdEndereco.Parameters.AddWithValue("@Cidade", cliente.Endereco.Cidade);
-                    cmdEndereco.Parameters.AddWithValue("@EnderecoUF", cliente.Endereco.UF);
-
-                    cmdEndereco.ExecuteNonQuery();
+                    cmd.Parameters.AddWithValue("@EnderecoId", enderecoId);
+                    cmd.ExecuteNonQuery();
                 }
             }
         }
@@ -60,17 +58,15 @@ namespace WCFServiceHost
         public Cliente BuscarClientePorId(int id)
         {
             Cliente cliente = null;
-
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
                 conn.Open();
-                string query = @"
-                    SELECT c.*, 
-                           e.Id AS EnderecoId, e.CEP, e.Logradouro, e.Numero, e.Complemento,
-                           e.Bairro, e.Cidade, e.UF AS EnderecoUF
-                    FROM Cliente c
-                    INNER JOIN Endereco e ON c.Id = e.ClienteId
-                    WHERE c.Id = @Id";
+                string query = @" SELECT c.*, 
+                                e.Id AS EnderecoId, e.CEP, e.Logradouro, e.Numero, e.Complemento,
+                                e.Bairro, e.Cidade, e.UF AS EnderecoUF
+                                FROM Cliente c
+                                INNER JOIN Endereco e ON c.EnderecoId = e.Id
+                                WHERE c.Id = @Id";
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
@@ -92,14 +88,15 @@ namespace WCFServiceHost
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
                 conn.Open();
-                using (SqlCommand cmd = new SqlCommand(@"
-                    UPDATE Cliente SET
-                        CPF=@CPF, Nome=@Nome, RG=@RG, DataExpedicao=@DataExpedicao,
-                        OrgaoExpedicao=@OrgaoExpedicao, UF=@UF,
-                        DataNascimento=@DataNascimento, Sexo=@Sexo, EstadoCivil=@EstadoCivil
-                    WHERE Id=@Id", conn))
+
+                using (SqlCommand cmd = new SqlCommand(@"UPDATE Cliente SET
+                                                        CPF=@CPF, Nome=@Nome, RG=@RG, DataExpedicao=@DataExpedicao,
+                                                        OrgaoExpedicao=@OrgaoExpedicao, UF=@UF,
+                                                        DataNascimento=@DataNascimento, Sexo=@Sexo, EstadoCivil=@EstadoCivil
+                                                        WHERE Id=@Id", 
+                                                        conn))
                 {
-                    //cmd.Parameters.AddWithValue("@Id", cliente.Id);
+                    cmd.Parameters.AddWithValue("@Id", cliente.Id);
                     cmd.Parameters.AddWithValue("@CPF", cliente.CPF);
                     cmd.Parameters.AddWithValue("@Nome", cliente.Nome);
                     cmd.Parameters.AddWithValue("@RG", cliente.RG);
@@ -108,23 +105,24 @@ namespace WCFServiceHost
                     cmd.Parameters.AddWithValue("@UF", cliente.UF);
                     cmd.Parameters.AddWithValue("@DataNascimento", cliente.DataNascimento);
                     cmd.Parameters.AddWithValue("@Sexo", cliente.Sexo);
-                    cmd.Parameters.AddWithValue("@EstadoCivil", cliente.EstadoCivil.ToString());
+                    cmd.Parameters.AddWithValue("@EstadoCivil", cliente.EstadoCivil);
                     cmd.ExecuteNonQuery();
                 }
 
-                using (SqlCommand cmdEndereco = new SqlCommand(@"
-                    UPDATE Endereco SET
-                        CEP=@CEP, Logradouro=@Logradouro, Numero=@Numero, Complemento=@Complemento,
-                        Bairro=@Bairro, Cidade=@Cidade, UF=@EnderecoUF
-                    WHERE ClienteId=@ClienteId", conn))
+                using (SqlCommand cmdEndereco = new SqlCommand(@"UPDATE Endereco SET
+                                                                CEP=@CEP, Logradouro=@Logradouro, Numero=@Numero, Complemento=@Complemento,
+                                                                Bairro=@Bairro, Cidade=@Cidade, UF=@EnderecoUF
+                                                                WHERE Id=@EnderecoId",
+                                                                conn))
                 {
+                    cmdEndereco.Parameters.AddWithValue("@EnderecoId", cliente.Endereco.Id);
                     cmdEndereco.Parameters.AddWithValue("@CEP", cliente.Endereco.CEP);
                     cmdEndereco.Parameters.AddWithValue("@Logradouro", cliente.Endereco.Logradouro);
                     cmdEndereco.Parameters.AddWithValue("@Numero", cliente.Endereco.Numero);
                     cmdEndereco.Parameters.AddWithValue("@Complemento", (object)cliente.Endereco.Complemento ?? DBNull.Value);
                     cmdEndereco.Parameters.AddWithValue("@Bairro", cliente.Endereco.Bairro);
                     cmdEndereco.Parameters.AddWithValue("@Cidade", cliente.Endereco.Cidade);
-                    cmdEndereco.Parameters.AddWithValue("@EnderecoUF", cliente.Endereco.UF.ToString());
+                    cmdEndereco.Parameters.AddWithValue("@EnderecoUF", cliente.Endereco.UF);
                     cmdEndereco.ExecuteNonQuery();
                 }
             }
@@ -135,17 +133,23 @@ namespace WCFServiceHost
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
                 conn.Open();
-                using (SqlCommand cmdEnd = new SqlCommand(
-                    "DELETE FROM Endereco WHERE ClienteId=@Id", conn))
-                {
-                    cmdEnd.Parameters.AddWithValue("@Id", id);
-                    cmdEnd.ExecuteNonQuery();
-                }
 
-                using (SqlCommand cmd = new SqlCommand(
-                    "DELETE FROM Cliente WHERE Id=@Id", conn))
+                int enderecoId;
+                using (SqlCommand cmd = new SqlCommand("SELECT EnderecoId FROM Cliente WHERE Id=@Id", conn))
                 {
                     cmd.Parameters.AddWithValue("@Id", id);
+                    enderecoId = (int)cmd.ExecuteScalar();
+                }
+
+                using (SqlCommand cmd = new SqlCommand("DELETE FROM Cliente WHERE Id=@Id", conn))
+                {
+                    cmd.Parameters.AddWithValue("@Id", id);
+                    cmd.ExecuteNonQuery();
+                }
+
+                using (SqlCommand cmd = new SqlCommand("DELETE FROM Endereco WHERE Id=@EnderecoId", conn))
+                {
+                    cmd.Parameters.AddWithValue("@EnderecoId", enderecoId);
                     cmd.ExecuteNonQuery();
                 }
             }
@@ -157,12 +161,11 @@ namespace WCFServiceHost
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
                 conn.Open();
-                string query = @"
-                    SELECT c.*, 
-                           e.Id AS EnderecoId, e.CEP, e.Logradouro, e.Numero, e.Complemento,
-                           e.Bairro, e.Cidade, e.UF AS EnderecoUF
-                    FROM Cliente c
-                    INNER JOIN Endereco e ON c.Id = e.ClienteId";
+                string query = @" SELECT c.*, 
+                                   e.Id AS EnderecoId, e.CEP, e.Logradouro, e.Numero, e.Complemento,
+                                   e.Bairro, e.Cidade, e.UF AS EnderecoUF
+                                   FROM Cliente c
+                                   INNER JOIN Endereco e ON c.EnderecoId = e.Id";
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 using (SqlDataReader reader = cmd.ExecuteReader())
@@ -180,6 +183,7 @@ namespace WCFServiceHost
         {
             return new Cliente
             {
+                Id = reader.GetInt32(reader.GetOrdinal("Id")),
                 CPF = reader.GetString(reader.GetOrdinal("CPF")),
                 Nome = reader.GetString(reader.GetOrdinal("Nome")),
                 RG = reader.GetString(reader.GetOrdinal("RG")),
@@ -188,19 +192,21 @@ namespace WCFServiceHost
                 UF = reader.GetString(reader.GetOrdinal("UF")),
                 DataNascimento = reader.GetDateTime(reader.GetOrdinal("DataNascimento")),
                 Sexo = reader.GetString(reader.GetOrdinal("Sexo")),
-                EstadoCivil = (EstadoCivil)Enum.Parse(typeof(EstadoCivil), reader.GetString(reader.GetOrdinal("EstadoCivil"))),
+                EstadoCivil = reader.GetString(reader.GetOrdinal("EstadoCivil")),
 
                 Endereco = new Endereco
                 {
+                    Id = reader.GetInt32(reader.GetOrdinal("EnderecoId")),
                     CEP = reader.GetString(reader.GetOrdinal("CEP")),
                     Logradouro = reader.GetString(reader.GetOrdinal("Logradouro")),
                     Numero = reader.GetString(reader.GetOrdinal("Numero")),
                     Complemento = reader["Complemento"] as string,
                     Bairro = reader.GetString(reader.GetOrdinal("Bairro")),
                     Cidade = reader.GetString(reader.GetOrdinal("Cidade")),
-                    UF = (UF)Enum.Parse(typeof(UF), reader.GetString(reader.GetOrdinal("EnderecoUF")))
+                    UF =  reader.GetString(reader.GetOrdinal("EnderecoUF"))
                 }
             };
         }
+
     }
 }
